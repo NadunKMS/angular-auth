@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { AuthService } from "../auth.service";
 import { Router } from "@angular/router";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: "app-login",
@@ -10,6 +11,7 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  errorMessage: string = "";
 
   constructor(
     private fb: FormBuilder,
@@ -33,9 +35,18 @@ export class LoginComponent implements OnInit {
           this.router.navigate(["/home"]);
         },
         error: (error) => {
-          console.error("Login error:", error);
+          if (error instanceof HttpErrorResponse && error.status === 401) {
+            this.errorMessage = "OOPS! Your email is not registered!";
+          } else {
+            this.errorMessage = error.message || "Unknown error occurred.";
+          }
+          this.showAlert(this.errorMessage);
         },
       });
     }
+  }
+
+  showAlert(message: string): void {
+    alert(message);
   }
 }
