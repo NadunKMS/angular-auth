@@ -1,0 +1,9 @@
+<div class="container">
+    <div *ngIf="userData" class="card mt-4 p-4">
+        <h2>Hi {{ userData.name }}</h2>
+        <p><strong>Your Email:</strong> {{ userData.email }}</p>
+        <button class="btn btn-outline-danger" (click)="logout()">
+            Logout
+        </button>
+    </div>
+</div>

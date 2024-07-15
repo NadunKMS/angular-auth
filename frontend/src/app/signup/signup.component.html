@@ -1,0 +1,68 @@
+<app-nav></app-nav>
+<div class="container">
+    <div class="mt-4">
+        <h2>Sign Up</h2>
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input
+                    id="name"
+                    formControlName="name"
+                    class="form-control mb-1"
+                />
+                <div
+                    *ngIf="
+                        signupForm.controls['name'].invalid &&
+                        signupForm.controls['name'].touched
+                    "
+                >
+                    <small class="text-danger mb-2">Name is required.</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input
+                    id="email"
+                    formControlName="email"
+                    class="form-control mb-1"
+                />
+                <div
+                    *ngIf="
+                        signupForm.controls['email'].invalid &&
+                        signupForm.controls['email'].touched
+                    "
+                >
+                    <small class="text-danger mb-2"
+                        >Email is required and must be valid.</small
+                    >
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input
+                    id="password"
+                    type="password"
+                    formControlName="password"
+                    class="form-control mb-1"
+                />
+                <div
+                    *ngIf="
+                        signupForm.controls['password'].invalid &&
+                        signupForm.controls['password'].touched
+                    "
+                >
+                    <small class="text-danger mb-2"
+                        >Password is required.</small
+                    >
+                </div>
+            </div>
+            <button
+                type="submit"
+                class="btn btn-primary mt-3 px-4 text-center rounded-pill"
+                [disabled]="signupForm.invalid"
+            >
+                Sign Up
+            </button>
+        </form>
+    </div>
+</div>

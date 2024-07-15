@@ -5,17 +5,27 @@ const jwt = require("jsonwebtoken");
 
 const createUser = async (req, res) => {
   try {
-    const { fullName, email, password } = req.body;
-    const user = new User({ fullName, email, password });
-    await user.save();
-    res.status(201).send(user);
-  } catch (error) {
-    if (error.code === 11000 && error.keyPattern.email) {
-      return res
-        .status(400)
-        .send({ message: `${req.body.email} already exists.` });
+    const { name, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).send({ message: `${email} already exists.` });
     }
-    res.status(400).send(error);
+
+    const user = new User({ name, email, password });
+    await user.save();
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(201).send({ token });
+
+  } catch (error) {
+    if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
+      return res.status(400).send({ message: `${req.body.email} already exists.` });
+    }
+    res.status(500).send(error);
   }
 };
 
@@ -34,12 +44,12 @@ const signInUser = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).send({ message: "Invalid email" });
+      return res.status(401).send({ message: "Invalid email or password" });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).send({ message: "Invalid password" });
+      return res.status(401).send({ message: "Invalid email or password" });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
